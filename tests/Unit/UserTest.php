@@ -20,4 +20,15 @@ class UserTest extends TestCase
 
         $this->assertInternalType('int', $user->id);
     }
+
+    public function testExample2()
+    {
+        $user = User::inRandomOrder()->first();
+
+        $this->assertInternalType('int', $user->id);
+    }
+
+
+
+
 }
