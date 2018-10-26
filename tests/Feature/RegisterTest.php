@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\User;
 
 class RegisterTest extends TestCase
 {
@@ -18,5 +19,21 @@ class RegisterTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+    }
+
+    public function testLoginPage()
+
+    {
+        $response = $this->get('/login');
+
+        $response->assertStatus(200);
+    }
+
+    public function testHome()
+
+    {
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('/login');
+        $response->assertRedirect('/home');
     }
 }
