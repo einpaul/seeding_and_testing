@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\User;
 
-class RegisterTest extends TestCase
+class UserAuthenticationTest extends TestCase
 {
     /**
      * A basic test example.
@@ -36,4 +36,24 @@ class RegisterTest extends TestCase
         $response = $this->actingAs($user)->get('/login');
         $response->assertRedirect('/home');
     }
+
+    public function testUserCannotLoginWithIncorrectPassword()
+    {
+        $user = factory(User::class)->create([
+            'password' => bcrypt('i-love-laravel'),
+        ]);
+
+        $response = $this->from('/login')->post('/login', [
+            'email' => $user->email,
+            'password' => 'invalid-password',
+        ]);
+
+        $response->assertRedirect('/login');
+        $response->assertSessionHasErrors('email');
+        $this->assertTrue(session()->hasOldInput('email'));
+        $this->assertFalse(session()->hasOldInput('password'));
+        $this->assertGuest();
+    }
+
+    
 }
