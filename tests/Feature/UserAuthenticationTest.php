@@ -37,7 +37,22 @@ class UserAuthenticationTest extends TestCase
         $response->assertRedirect('/home');
     }
 
+    public function testUserCanLoginWithCorrectCredentials()
+
+    {
+        $user = factory(User::class)->create([
+            'password' => bcrypt($password = 'i-love-laravel'),
+        ]);
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => $password,
+        ]);
+        $response->assertRedirect('/home');
+        $this->assertAuthenticatedAs($user);
+    }
+
     public function testUserCannotLoginWithIncorrectPassword()
+        
     {
         $user = factory(User::class)->create([
             'password' => bcrypt('i-love-laravel'),
@@ -55,5 +70,5 @@ class UserAuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    
+
 }
